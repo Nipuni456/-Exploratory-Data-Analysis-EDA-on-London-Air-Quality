@@ -1,0 +1,334 @@
+---
+title: "Mini_Project"
+author: "Nipuni"
+date: "2024-01-26"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+library(tinytex)
+library(ggplot2)
+library(latex2exp)
+library(janitor)
+library(skimr)
+library(tidyr)
+```
+
+```{r}
+```
+
+
+```{r}
+lOndon_data <- read_csv(file = "../Data/london_local_data_2022.csv",col_types = "cccddddddd")
+view(lOndon_data)
+
+#london_data <- read.csv(file = "../Data/london_local_data_2022.csv", colClasses = c("character", "character", "Date", rep("numeric", 7)))
+
+#library(readr)
+
+#london_data <- read_csv(file = "../Data/london_local_data_2022.csv", col_types = "ccDdddddddd")
+
+
+
+```
+
+```{r}
+str(lOndon_data)
+```
+
+```{r}
+summary(lOndon_data)
+```
+
+
+```{r}
+splited_lOndon_data <- separate(lOndon_data,date,into = c("Date","Time"), sep = 10)
+splited_lOndon_data$Time <- gsub("[TZ]", "", splited_lOndon_data$Time)
+print(splited_lOndon_data)
+
+
+view(splited_lOndon_data)
+```
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=nox)) + geom_histogram(color = "darkblue", fill = "lightblue") + labs(x = TeX("$NO_x$ Concentration"), title = "Distribution of Nox") + geom_freqpoly() 
+```
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=no2)) + geom_histogram(color = "darkgreen", fill = "lightgreen") + labs(x = TeX("$NO_2$ Concentration"), title = "Distribution of No2") + geom_freqpoly() 
+```
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=no)) + geom_histogram(color = "darkblue", fill = "lightblue") + labs(x = TeX("$NO$ Concentration"), title = "Distribution of No") + geom_freqpoly() 
+```
+
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=pm10)) + geom_histogram(color = "darkgreen", fill = "lightgreen") + labs(x = TeX("$PM_10$ Concentration"), title = "Distribution of PM10") + geom_freqpoly() 
+```
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=o3)) + geom_histogram(color = "darkblue", fill = "lightblue") + labs(x = TeX("$O_3$ Concentration"), title = "Distribution of O3") + geom_freqpoly()  
+```
+
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=pm2_5)) + geom_histogram(color = "darkgreen", fill = "lightgreen") + labs(x = TeX("$PM2_5$ Concentration"), title = "Distribution of PM2_5") + geom_freqpoly() 
+```
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=so2)) + geom_histogram(color = "darkblue", fill = "lightblue") + labs(x = TeX("$SO_2$ Concentration"), title = "Distribution Of So2") + geom_freqpoly() 
+```
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=nox)) + geom_freqpoly(aes(col = site)) + labs(x= TeX("$NO_x$ Concentration"), title = "Distribution of NOx Concentrations Across Monitoring 36 Sites")
+```
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=no2)) + geom_freqpoly(aes(col = site)) + labs(x= TeX("$NO_2$ Concentration"), title = "Distribution of NO2 Concentrations Across Monitoring 36 Sites")
+```
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=no)) + geom_freqpoly(aes(col = site)) + labs(x= TeX("$No$ Concentration"), title = "Distribution of NO Concentrations Across Monitoring 36 Sites")
+```
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=pm10)) + geom_freqpoly(aes(col = site)) + labs(x= TeX("$PM_(10)$ Concentration"), title = "Distribution of pm10 Concentrations Across Monitoring 36 Sites")
+```
+
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=o3)) + geom_freqpoly(aes(col = site)) + labs(x= TeX("$O_3$ Concentration"), title = "Distribution of O3 Concentrations Across Monitoring 36 Sites")
+```
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=pm2_5)) + geom_freqpoly(aes(col = site)) + labs(x= TeX("$PM2_5$ Concentration"), title = "Distribution of pm2_5 Concentrations Across Monitoring 36 Sites")
+```
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=so2)) + geom_freqpoly(aes(col = site)) + labs(x= TeX("$So_2$ Concentration"), title = "Distribution of So2 Concentrations Across Monitoring 36 Sites")
+```
+
+```{r}
+splited_lOndon_data %>% ggplot(mapping = aes(x=Date, y=nox)) + geom_line()
+```
+```{r}
+# Heatmap for correlation matrix
+install.packages("ggcorrplot")
+library(ggcorrplot)
+```
+
+
+```{r}
+cor_matrix <- cor(splited_lOndon_data[, c("nox","no2","no","pm10","o3","pm2_5","so2")])
+ggcorrplot(cor_matrix)
+
+```
+```{r}
+num_data <- splited_lOndon_data[ , c(5:11)]
+head(num_data)
+
+```
+```{r}
+pairs(num_data)
+```
+
+```{r}
+# Install and load the necessary packages
+install.packages(c("dplyr", "lubridate"))
+library(dplyr)
+library(lubridate)
+
+```
+
+```{r}
+# Convert the "date_column" to a Date object
+splited_lOndon_data$Date <- as.Date(splited_lOndon_data$Date)
+
+# Add a new column "month_column" with the month information
+splited_lOndon_data <- splited_lOndon_data %>%
+  mutate(Month = month.name[month(Date)])
+
+str(splited_lOndon_data)
+
+view(splited_lOndon_data)
+```
+```{r}
+splited_lOndon_data %>% ggplot(aes(x= Month,fill= site)) + geom_bar() + labs(x = "Month", title = "Distribution of NOx concentrations across sites, grouped by month") +coord_flip() 
+```
+```{r}
+NOx_vs_Month <- splited_lOndon_data %>% ggplot(aes(x= Month,y = nox)) + geom_boxplot(aes(col = Month)) + coord_flip() + labs(y= TeX("$NO_x Concentration$"), x = "Month")
+
+NOx_vs_Month
+
+postscript(file = "NOx_vs_Month", width = 10, height = 8, horizontal = F)
+NOx_vs_Month
+dev.off()
+```
+```{r}
+NO2_Month <- splited_lOndon_data %>% ggplot(aes(x= Month,y = no2)) + geom_boxplot(col = "blue",fill = "lightblue") + coord_flip() + labs(y= TeX("$No_2 Concenration$"), x = "Month")
+
+NO2_Month 
+
+postscript(file = "NO2_Month", width = 10, height = 8, horizontal = F)
+NO2_Month
+dev.off()
+
+
+```
+```{r}
+NO_Month <- splited_lOndon_data %>% ggplot(aes(x= Month,y = no)) + geom_boxplot(col = "purple",fill = "pink") + coord_flip() + labs(y= TeX("$No Concenration$"), x = "Month")
+
+NO_Month
+
+postscript(file = "NO_Month", width = 10, height = 8, horizontal = F)
+NO_Month
+dev.off()
+
+```
+
+```{r}
+PM10_Month <- splited_lOndon_data %>% ggplot(aes(x= Month,y = pm10)) + geom_boxplot(col = "green",fill = "lightgreen") + coord_flip() + labs(y= TeX("$PM_10 Concenration$"), x = "Month")
+
+PM10_Month
+
+postscript(file = "PM10_Month", width = 10, height = 8, horizontal = F)
+PM10_Month
+dev.off()
+```
+```{r}
+O3_Month <- splited_lOndon_data %>% ggplot(aes(x= Month,y = o3)) + geom_boxplot(col = "orange", fill = "lightgreen") + coord_flip() + labs(y= TeX("$O_3 Concenration$"), x = "Month")
+
+O3_Month 
+
+postscript(file = "O3_Month", width = 10, height = 8, horizontal = F)
+O3_Month
+dev.off()
+```
+```{r}
+PM2_5_Month <- splited_lOndon_data %>% ggplot(aes(x= Month,y = pm2_5)) + geom_boxplot(col = "purple" , fill = "lightblue") + coord_flip() + labs(y= TeX("$PM_25 Concenration$"), x = "Month")
+
+PM2_5_Month
+
+postscript(file = "PM2_5_Month", width = 10, height = 8, horizontal = F)
+PM2_5_Month
+dev.off()
+
+```
+```{r}
+SO2_Month <- splited_lOndon_data %>% ggplot(aes(x= Month,y = so2)) + geom_boxplot(col = "blue",fill = "lightblue") + coord_flip() + labs(y= TeX("$So_2 Concenration$"), x = "Month")
+
+SO2_Month
+
+postscript(file = "SO2_Month", width = 10, height = 8, horizontal = F)
+SO2_Month
+dev.off()
+```
+```{r}
+Nox_Time <- splited_lOndon_data %>% ggplot(aes(x= Time,y = nox)) + geom_boxplot(col = "blue",fill = "lightblue") + coord_flip() + labs(y= TeX("$No_x Concenration$"), x = "Time")
+
+Nox_Time
+
+postscript(file = "Nox_Time", width = 10, height = 8, horizontal = F)
+Nox_Time
+dev.off()
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = nox)) + geom_boxplot(aes(col = Time)) + coord_flip() + labs(y= TeX("$No_x Concenration$"), x = "Month")
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = nox)) + geom_boxplot(aes(col = site)) + coord_flip() + labs(y= TeX("$No_x Concenration$"), x = "Month")
+```
+
+```{r}
+NO2_Time <- splited_lOndon_data %>% ggplot(aes(x= Time,y = no2)) + geom_boxplot(col = "blue",fill = "lightblue") + coord_flip() + labs(y= TeX("$No_2$ Concenration"), x = "Time")
+
+NO2_Time
+
+postscript(file = "NO2_Time", width = 10, height = 8, horizontal = F)
+NO2_Time
+dev.off()
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = no2)) + geom_boxplot(aes(col = Time)) + coord_flip() + labs(y= TeX("$No_2 Concenration$"), x = "Month")
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = no2)) + geom_boxplot(aes(col = site)) + coord_flip() + labs(y= TeX("$No_2 Concenration$"), x = "Month")
+```
+
+```{r}
+NO_Time <- splited_lOndon_data %>% ggplot(aes(x= Time,y = no)) + geom_boxplot(col = "blue",fill = "lightblue") + coord_flip() + labs(y= TeX("No Concenration"), x = "Time")
+
+NO_Time
+
+postscript(file = "NO_Time", width = 10, height = 8, horizontal = F)
+NO_Time
+dev.off()
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = no)) + geom_boxplot(aes(col = Time)) + coord_flip() + labs(y= TeX("$No Concenration$"), x = "Month")
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = no)) + geom_boxplot(aes(col = site)) + coord_flip() + labs(y= TeX("$No Concenration$"), x = "Month")
+```
+
+```{r}
+PM10_Time <- splited_lOndon_data %>% ggplot(aes(x= Time,y = pm10)) + geom_boxplot(col = "blue",fill = "lightblue") + coord_flip() + labs(y= TeX("$PM_(10)$ Concenration"), x = "Time")
+
+PM10_Time
+
+postscript(file = "PM10_Time", width = 10, height = 8, horizontal = F)
+PM10_Time
+dev.off()
+
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = pm10)) + geom_boxplot(aes(col = Time)) + coord_flip() + labs(y= TeX("$PM_10$ Concenration"), x = "Month")
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = pm10)) + geom_boxplot(aes(col = site)) + coord_flip() + labs(y= TeX("PM_10$ Concenration"), x = "Month")
+```
+
+
+
+```{r}
+O3_Time <- splited_lOndon_data %>% ggplot(aes(x= Time,y = o3)) + geom_boxplot(col = "blue",fill = "lightblue") + coord_flip() + labs(y= TeX("$O_3$ Concenration"), x = "Time")
+
+O3_Time
+
+postscript(file = "O3_Time", width = 10, height = 8, horizontal = F)
+O3_Time
+dev.off()
+
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = o3)) + geom_boxplot(aes(col = Time)) + coord_flip() + labs(y= TeX("$O_3$ Concenration"), x = "Month")
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = o3)) + geom_boxplot(aes(col = site)) + coord_flip() + labs(y= TeX("$O_3$ Concenration"), x = "Month")
+```
+
+```{r}
+
+PM2_5_Time <- splited_lOndon_data %>% ggplot(aes(x= Time,y = pm2_5)) + geom_boxplot(col = "blue",fill = "lightblue") + coord_flip() + labs(y= TeX("$PM2_5$ Concenration"), x = "Time")
+
+PM2_5_Time
+
+postscript(file = "PM2_5_Time", width = 10, height = 8, horizontal = F)
+PM2_5_Time
+dev.off()
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = pm2_5)) + geom_boxplot(aes(col = Time)) + coord_flip() + labs(y= TeX("$PM2_5$ Concenration"), x = "Month")
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = pm2_5)) + geom_boxplot(aes(col = site)) + coord_flip() + labs(y= TeX("$PM2_5$ Concenration"), x = "Month")
+```
+
+```{r}
+SO2_Time <- splited_lOndon_data %>% ggplot(aes(x= Time,y = so2)) + geom_boxplot(col = "blue",fill = "lightblue") + coord_flip() + labs(y= TeX("$So_2$ Concenration"), x = "Time")
+
+SO2_Time
+
+postscript(file = "SO2_Time", width = 10, height = 8, horizontal = F)
+SO2_Time
+dev.off()
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = so2)) + geom_boxplot(aes(col = Time)) + coord_flip() + labs(y= TeX("$So_2$ Concenration"), x = "Month")
+
+splited_lOndon_data %>% ggplot(aes(x= Month,y = so2)) + geom_boxplot(aes(col = site)) + coord_flip() + labs(y= TeX("$So_2$ Concenration"), x = "Month")
+```
+
+
+```{r}
+london_sites <- read_csv(file = "../Data/london_local_sites.csv")
+view(london_sites)
+```
+
+
+
+```{r}
+merged_df <- merge(splited_lOndon_data, london_sites, by = "code", all = TRUE)
+view(merged_df)
+```
+
